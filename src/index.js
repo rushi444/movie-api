@@ -1,26 +1,9 @@
 const { GraphQLServer } = require('graphql-yoga');
 const { users, movies, reviews } = require('./sampleData');
-
-const typeDefs = `
-    type Query {
-        movie: String!
-        user: String!
-    }
-`;
-
-const resolvers = {
-  Query: {
-    movie() {
-      return 'The Lego Movie';
-    },
-    user() {
-      return 'Rushi';
-    },
-  },
-};
+const resolvers = require('./resolvers');
 
 const server = new GraphQLServer({
-  typeDefs,
+  typeDefs: './src/schema.graphql',
   resolvers,
   context: {
     users,
