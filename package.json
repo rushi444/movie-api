@@ -1,0 +1,11 @@
+{
+  "name": "movie-api",
+  "version": "1.0.0",
+  "main": "src/index.js",
+  "repository": "https://github.com/rushi444/movie-api.git",
+  "author": "rushi444 <rushi44@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "graphql-yoga": "^1.18.3"
+  }
+}
