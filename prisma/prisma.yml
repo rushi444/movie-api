@@ -1,0 +1,6 @@
+endpoint: https://us1.prisma.sh/rushi-arumalla-9c9bae/movie-api/dev
+datamodel: datamodel.prisma
+
+generate:
+  - generator: javascript-client
+    output: ./generated/prisma-client/

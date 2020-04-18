@@ -1,4 +1,5 @@
 const { GraphQLServer, PubSub } = require('graphql-yoga');
+const { prisma } = require('../prisma/generated/prisma-client');
 const { users, movies, reviews } = require('./sampleData');
 const resolvers = require('./resolvers');
 
@@ -12,6 +13,7 @@ const server = new GraphQLServer({
     movies,
     reviews,
     pubsub,
+    prisma,
   },
 });
 

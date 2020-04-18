@@ -1,42 +1,63 @@
 const resolvers = {
   Query: {
-    movies(parent, args, context, info) {
-      return context.movies;
+    async movies(parent, args, context, info) {
+      const movies = await context.prisma.movies();
+      return movies;
     },
-    users(parent, args, context, info) {
-      return context.users;
+    async users(parent, args, context, info) {
+      const users = await context.prisma.users();
+      return users;
     },
-    reviews(parent, args, context, info) {
-      return context.reviews;
+    async reviews(parent, args, context, info) {
+      const reviews = await context.prisma.reviews();
+      return reviews;
+    },
+    async reviewsByUser(parent, args, context, info) {
+      const userExists = await context.prisma.$exists.user({ id: args.userId });
+      if (!userExists) {
+        throw new Error('User not found');
+      }
+      const reviews = await context.prisma.user({ id: args.userId }).reviews();
+      return reviews;
     },
   },
   Mutation: {
-    signup(parent, args, context, info) {
-      const user = {
-        id: `100${context.users.length + 1}`,
+    async signup(parent, args, context, info) {
+      const user = await context.prisma.createUser({
         name: args.name,
         email: args.email,
-      };
-      context.users.push(user);
+      });
       return user;
     },
-    createMovie(parent, args, context, info) {
-      const movie = {
-        id: `200${context.movies.length + 1}`,
+    async createMovie(parent, args, context, info) {
+      const movie = await context.prisma.createMovie({
         title: args.title,
-      };
-      context.movies.push(movie);
+      });
       return movie;
     },
-    createReview(parent, args, context, info) {
-      const review = {
-        id: `300${context.reviews.length + 1}`,
-        movie: args.movieId,
+    async createReview(parent, args, context, info) {
+      const user = context.prisma.$exists.user({ id: args.userId });
+      const movie = context.prisma.$exists.movie({ id: args.movieId });
+      if (!user) {
+        throw new Error('User not found');
+      }
+      if (!movie) {
+        throw new Error('Movie not found');
+      }
+      const review = await context.prisma.createReview({
+        movie: {
+          connect: {
+            id: args.movieId,
+          },
+        },
         reviewText: args.reviewText,
         rating: args.rating,
-        user: args.userId,
-      };
-      context.reviews.push(review);
+        user: {
+          connect: {
+            id: args.userId,
+          },
+        },
+      });
       context.pubsub.publish('newReview', { review });
       return review;
     },
@@ -50,28 +71,20 @@ const resolvers = {
   },
   Review: {
     movie(parent, args, context, info) {
-      return context.movies.find((movie) => {
-        return movie.id === parent.movie;
-      });
+      return context.prisma.review({ id: parent.id }).movie();
     },
     user(parent, args, context, info) {
-      return context.users.find((user) => {
-        return user.id === parent.user;
-      });
+      return context.prisma.review({ id: parent.id }).user();
     },
   },
   User: {
     reviews(parent, args, context, info) {
-      return context.reviews.filter((review) => {
-        return review.user === parent.id;
-      });
+      return context.prisma.user({ id: parent.id }).reviews();
     },
   },
   Movie: {
     reviews(parent, args, context, info) {
-      return context.reviews.filter((review) => {
-        return review.id === parent.reviews;
-      });
+      return context.prisma.movie({ id: parent.id }).reviews();
     },
   },
 };
