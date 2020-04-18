@@ -1,17 +1,13 @@
 const { GraphQLServer, PubSub } = require('graphql-yoga');
 const { prisma } = require('../prisma/generated/prisma-client');
-const { users, movies, reviews } = require('./sampleData');
-const resolvers = require('./resolvers');
+const mainResolver = require('./resolvers/index');
 
 const pubsub = new PubSub();
 
 const server = new GraphQLServer({
   typeDefs: './src/schema.graphql',
-  resolvers,
+  resolvers: mainResolver,
   context: {
-    users,
-    movies,
-    reviews,
     pubsub,
     prisma,
   },

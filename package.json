@@ -6,6 +6,7 @@
   "author": "rushi444 <rushi44@gmail.com>",
   "license": "MIT",
   "dependencies": {
+    "graphql-merge-resolvers": "^1.1.16",
     "graphql-yoga": "^1.18.3",
     "prisma-client-lib": "^1.34.10"
   },
