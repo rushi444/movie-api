@@ -1,6 +1,8 @@
-const { GraphQLServer } = require('graphql-yoga');
+const { GraphQLServer, PubSub } = require('graphql-yoga');
 const { users, movies, reviews } = require('./sampleData');
 const resolvers = require('./resolvers');
+
+const pubsub = new PubSub();
 
 const server = new GraphQLServer({
   typeDefs: './src/schema.graphql',
@@ -9,6 +11,7 @@ const server = new GraphQLServer({
     users,
     movies,
     reviews,
+    pubsub,
   },
 });
 

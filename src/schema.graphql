@@ -4,6 +4,21 @@ type Query {
   reviews: [Review!]!
 }
 
+type Mutation {
+  signup(name: String!, email: String!): User!
+  createMovie(title: String!): Movie!
+  createReview(
+    movieId: ID!
+    reviewText: String!
+    rating: Int!
+    userId: ID!
+  ): Review!
+}
+
+type Subscription {
+  review: Review!
+}
+
 type User {
   id: ID!
   name: String!
